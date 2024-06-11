@@ -1,0 +1,9 @@
+[package]
+name = "fetchcat"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+ansi_term = "0.12.1"
+os_info = "3.8.2"
+systemstat = "0.2.3"
