@@ -1,5 +1,6 @@
-use std::process::Command;
+use std::{collections::HashMap, process::Command};
 
+use os_info::Type;
 use systemstat::{saturating_sub_bytes, Platform, System};
 
 use ansi_term::{ANSIString, Color};
@@ -18,9 +19,34 @@ fn main() {
         ",
     );
 
+    let mut os_icons: HashMap<&str, Type> = HashMap::default();
+
+    // Yes
+    os_icons.insert("", Type::Alpine);
+    os_icons.insert("", Type::Kali);
+    os_icons.insert("", Type::RockyLinux);
+    os_icons.insert("󰣭", Type::Mint);
+    os_icons.insert("", Type::AlmaLinux);
+    os_icons.insert("", Type::Arch);
+    os_icons.insert("", Type::CentOS);
+    os_icons.insert("", Type::Debian);
+    os_icons.insert("", Type::EndeavourOS);
+    os_icons.insert("", Type::Fedora);
+    os_icons.insert("", Type::FreeBSD);
+    os_icons.insert("", Type::Gentoo);
+    os_icons.insert("", Type::Manjaro);
+    os_icons.insert("", Type::NixOS);
+    os_icons.insert("", Type::openSUSE);
+    os_icons.insert("", Type::Redhat);
+    os_icons.insert("", Type::Solus);
+    os_icons.insert("", Type::Ubuntu);
+    os_icons.insert("", Type::Void);
+    os_icons.insert("", Type::Pop);
+
     let system = System::new();
 
-    let distro = os_info::get().os_type().to_string();
+    let distro = os_info::get().os_type();
+
     let mem = system.memory().unwrap();
 
     let art_lines = art.lines();
@@ -46,7 +72,13 @@ fn main() {
         }
     }
 
-    let d = format!("{} {}", "󰣇", distro);
+    let mut d = String::default();
+    for (k, v) in os_icons.iter() {
+        if &distro == v {
+            d = format!("{} {}", k, distro.to_string())
+        }
+    }
+
     let w = format!("{} {}", "󰖲", wm);
     let p = format!("{} {}", "󰏖", packages);
     let m = format!(
