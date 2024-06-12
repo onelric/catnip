@@ -57,10 +57,10 @@ fn get_window_manager(wms: Vec<&str>) -> String {
     let output = Command::new("sh").arg("-c").arg("ps -e").output().unwrap();
     let output_str = std::str::from_utf8(&output.stdout).unwrap();
 
-    let mut wm = String::default();
+    let mut wm = String::from("Unknown");
     for i in wms.iter() {
         if output_str.contains(i) {
-            wm = String::from(*i);
+            wm = String::from(*i)
         }
     }
 
