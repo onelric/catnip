@@ -55,6 +55,7 @@ fn main() {
         art_array.push(i);
     }
 
+    // Get packages
     let output = Command::new("sh")
         .arg("-c")
         .arg("pacman -Qq | wc -l")
@@ -62,6 +63,7 @@ fn main() {
         .unwrap();
     let packages = std::str::from_utf8(&output.stdout).unwrap().trim();
 
+    // Get window manager
     let output = Command::new("sh").arg("-c").arg("ps -e").output().unwrap();
     let output_str = std::str::from_utf8(&output.stdout).unwrap();
 
