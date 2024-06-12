@@ -1,14 +1,84 @@
-use std::{collections::HashMap, process::Command};
+use std::process::Command;
 
 use os_info::Type;
 use systemstat::{saturating_sub_bytes, Platform, System};
 
 use ansi_term::{ANSIString, Color};
 
-fn main() {
-    // Add window managers as needed
-    let wms = ["i3", "openbox", "awesome", "bspwm"];
+// Get packages
+fn get_packages() -> String {
+    let output = Command::new("sh")
+        .arg("-c")
+        .arg("pacman -Qq | wc -l")
+        .output()
+        .unwrap();
 
+    std::str::from_utf8(&output.stdout)
+        .unwrap()
+        .trim()
+        .to_owned()
+}
+
+fn get_distro() -> [String; 2] {
+    let distro = os_info::get().os_type();
+
+    // Get icon
+    [
+        match distro {
+            Type::Arch => "",
+            Type::Debian => "",
+            Type::Ubuntu => "",
+            Type::Void => "",
+            Type::Gentoo => "",
+            Type::Mint => "󰣭",
+            Type::Pop => "",
+            Type::Manjaro => "",
+            Type::openSUSE => "",
+            Type::Redhat => "",
+            Type::FreeBSD => "",
+            Type::Solus => "",
+            Type::NixOS => "",
+            Type::Fedora => "",
+            Type::EndeavourOS => "",
+            Type::CentOS => "",
+            Type::AlmaLinux => "",
+            Type::RockyLinux => "",
+            Type::Kali => "",
+            Type::Alpine => "",
+            _ => "",
+        }
+        .to_owned(),
+        distro.to_string(),
+    ]
+}
+
+fn get_window_manager(wms: Vec<&str>) -> String {
+    // Get window manager
+    let output = Command::new("sh").arg("-c").arg("ps -e").output().unwrap();
+    let output_str = std::str::from_utf8(&output.stdout).unwrap();
+
+    let mut wm = String::default();
+    for i in wms.iter() {
+        if output_str.contains(i) {
+            wm = String::from(*i);
+        }
+    }
+
+    wm
+}
+
+fn get_memory() -> [String; 2] {
+    let system = System::new();
+
+    let mem = system.memory().unwrap();
+
+    [
+        saturating_sub_bytes(mem.total, mem.free).to_string(),
+        mem.total.to_string(),
+    ]
+}
+
+fn get_ascii() -> Vec<String> {
     // DON'T REMOVE ME ;-;
     let art = ANSIString::from(
         "
@@ -19,81 +89,29 @@ fn main() {
         ",
     );
 
-    let mut os_icons: HashMap<&str, Type> = HashMap::default();
-
-    // Yes
-    os_icons.insert("", Type::Alpine);
-    os_icons.insert("", Type::Kali);
-    os_icons.insert("", Type::RockyLinux);
-    os_icons.insert("󰣭", Type::Mint);
-    os_icons.insert("", Type::AlmaLinux);
-    os_icons.insert("", Type::Arch);
-    os_icons.insert("", Type::CentOS);
-    os_icons.insert("", Type::Debian);
-    os_icons.insert("", Type::EndeavourOS);
-    os_icons.insert("", Type::Fedora);
-    os_icons.insert("", Type::FreeBSD);
-    os_icons.insert("", Type::Gentoo);
-    os_icons.insert("", Type::Manjaro);
-    os_icons.insert("", Type::NixOS);
-    os_icons.insert("", Type::openSUSE);
-    os_icons.insert("", Type::Redhat);
-    os_icons.insert("", Type::Solus);
-    os_icons.insert("", Type::Ubuntu);
-    os_icons.insert("", Type::Void);
-    os_icons.insert("", Type::Pop);
-
-    let system = System::new();
-
-    let distro = os_info::get().os_type();
-
-    let mem = system.memory().unwrap();
-
     let art_lines = art.lines();
     let mut art_array = vec![];
     for i in art_lines {
-        art_array.push(i);
+        art_array.push(String::from(i));
     }
+    art_array
+}
 
-    // Get packages
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg("pacman -Qq | wc -l")
-        .output()
-        .unwrap();
-    let packages = std::str::from_utf8(&output.stdout).unwrap().trim();
+fn main() {
+    // Add window managers as needed
+    let wms = vec!["i3", "openbox", "awesome", "bspwm"];
 
-    // Get window manager
-    let output = Command::new("sh").arg("-c").arg("ps -e").output().unwrap();
-    let output_str = std::str::from_utf8(&output.stdout).unwrap();
+    let mem = get_memory();
+    let distro = get_distro();
+    let ascii = get_ascii();
 
-    let mut wm = "";
-    for i in &wms {
-        if output_str.contains(i) {
-            wm = i;
-        }
-    }
-
-    let mut d = String::default();
-    for (k, v) in os_icons.iter() {
-        if &distro == v {
-            d = format!("{} {}", k, distro.to_string())
-        }
-    }
-
-    let w = format!("{} {}", "󰖲", wm);
-    let p = format!("{} {}", "󰏖", packages);
-    let m = format!(
-        "{} {} / {}",
-        "󰍛",
-        saturating_sub_bytes(mem.total, mem.free),
-        mem.total
-    );
-
+    let d = format!("{} {}", distro[0], distro[1]);
+    let w = format!("{} {}", "󰖲", get_window_manager(wms));
+    let p = format!("{} {}", "󰏖", get_packages());
+    let m = format!("{} {} / {}", "󰍛", mem[0], mem[1]);
     let data = vec![d.as_str(), w.as_str(), p.as_str(), m.as_str()];
 
     let mut fetch = String::new();
-
     for i in 1..5 {
         let di = i - 1;
         if di < data.len() {
@@ -105,9 +123,9 @@ fn main() {
                 3 => Color::Purple.italic().paint(data_text),
                 _ => ANSIString::from(""),
             };
-            fetch += format!("{}  {}\n", art_array[i], text).as_str();
+            fetch += format!("{}  {}\n", ascii[i], text).as_str();
         } else {
-            fetch += format!("{}\n", art_array[i]).as_str()
+            fetch += format!("{}\n", ascii[i]).as_str()
         }
     }
     println!("\n{}\n", fetch)
