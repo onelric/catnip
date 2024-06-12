@@ -10,3 +10,11 @@
 ### Maybe to come
 * Customization via arguments
 * More distributions
+
+### Install
+Make sure cargo is installed.
+```
+git clone https://github.com/onelric/fetchcat.git
+cd fetchcat
+makepkg -si
+```
