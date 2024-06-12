@@ -1,6 +1,6 @@
 pkgname=fetchcat
 pkgver=1.0
-pkgdesc="Simple fetch display system information and a cute cat."
+pkgdesc="Simple fetch displaying system information and a cute cat."
 pkgrel="1"
 url="https://github.com/onelric/fetchcat/"
 arch=('x86_64')
