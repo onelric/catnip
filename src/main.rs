@@ -99,7 +99,9 @@ fn get_ascii() -> Vec<String> {
 
 fn main() {
     // Add window managers as needed
-    let wms = vec!["i3", "openbox", "awesome", "bspwm"];
+    let wms = vec![
+        "i3", "openbox", "awesome", "bspwm", "qtile", "hyprland", "sway", "xmonad",
+    ];
 
     let mem = get_memory();
     let distro = get_distro();
