@@ -1,11 +1,12 @@
+# Maintainer: elric <elric.thatonemail@gmail.com>
 pkgname=fetchcat
-pkgver=1.0
+pkgver=0.1.0
 pkgdesc="Simple fetch displaying system information and a cute cat."
-pkgrel="1"
+pkgrel=1
 url="https://github.com/onelric/fetchcat/"
-arch=('x86_64')
+arch=('i686' 'x86_64' 'armv6h' 'armv7h')
 license=('MIT')
-makedepends=('cargo')
+makedepends=('rust' 'cargo')
 _gitroot="git://github.com/onelric/fetchcat.git"
 _gitname="fetchcat"
 
