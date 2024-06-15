@@ -11,7 +11,7 @@ fn get_packages() -> String {
         .arg("-c")
         .arg("pacman -Qq | wc -l")
         .output()
-        .unwrap();
+        .expect("Failed to run pacman command!");
 
     std::str::from_utf8(&output.stdout)
         .unwrap()
@@ -54,7 +54,11 @@ fn get_distro() -> [String; 2] {
 
 fn get_window_manager(wms: Vec<&str>) -> String {
     // Get window manager
-    let output = Command::new("sh").arg("-c").arg("ps -e").output().unwrap();
+    let output = Command::new("sh")
+        .arg("-c")
+        .arg("ps -e")
+        .output()
+        .expect("Failed to run command!");
     let output_str = std::str::from_utf8(&output.stdout).unwrap();
 
     let mut wm = String::from("Unknown");
@@ -70,7 +74,7 @@ fn get_window_manager(wms: Vec<&str>) -> String {
 fn get_memory() -> [String; 2] {
     let system = System::new();
 
-    let mem = system.memory().unwrap();
+    let mem = system.memory().expect("Failed to retrieve memory!");
 
     [
         saturating_sub_bytes(mem.total, mem.free).to_string(),
