@@ -1,14 +1,14 @@
 # Maintainer: elric <elric.thatonemail@gmail.com>
-pkgname=fetchcat
+pkgname=catnip
 pkgver=0.1.0
 pkgdesc="Simple fetch displaying system information and a cute cat."
 pkgrel=1
-url="https://github.com/onelric/fetchcat/"
+url="https://github.com/onelric/catnip/"
 arch=('i686' 'x86_64' 'armv6h' 'armv7h' 'aarch64')
 license=('MIT')
 makedepends=('rust' 'cargo')
-_gitroot="git://github.com/onelric/fetchcat.git"
-_gitname="fetchcat"
+_gitroot="git://github.com/onelric/catnip.git"
+_gitname="catnip"
 
 prepare() {
     export RUSTUP_TOOLCHAIN=stable

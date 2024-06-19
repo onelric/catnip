@@ -1,138 +1,81 @@
-use std::process::Command;
+extern crate ansi_term;
+extern crate getopts;
+extern crate os_info;
+extern crate systemstat;
 
-use os_info::Type;
-use systemstat::{saturating_sub_bytes, Platform, System};
+use std::env;
 
 use ansi_term::{ANSIString, Color};
+use getopts::Options;
+use util::*;
 
-// Get packages
-fn get_packages() -> String {
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg("pacman -Qq | wc -l")
-        .output()
-        .expect("Failed to run pacman command!");
-
-    std::str::from_utf8(&output.stdout)
-        .unwrap()
-        .trim()
-        .to_owned()
-}
-
-fn get_distro() -> [String; 2] {
-    let distro = os_info::get().os_type();
-
-    // Get icon
-    [
-        match distro {
-            Type::Arch => "",
-            Type::Debian => "",
-            Type::Ubuntu => "",
-            Type::Void => "",
-            Type::Gentoo => "",
-            Type::Mint => "󰣭",
-            Type::Pop => "",
-            Type::Manjaro => "",
-            Type::openSUSE => "",
-            Type::Redhat => "",
-            Type::FreeBSD => "",
-            Type::Solus => "",
-            Type::NixOS => "",
-            Type::Fedora => "",
-            Type::EndeavourOS => "",
-            Type::CentOS => "",
-            Type::AlmaLinux => "",
-            Type::RockyLinux => "",
-            Type::Kali => "",
-            Type::Alpine => "",
-            _ => "",
-        }
-        .to_owned(),
-        distro.to_string(),
-    ]
-}
-
-fn get_window_manager(wms: Vec<&str>) -> String {
-    // Get window manager
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg("ps -e")
-        .output()
-        .expect("Failed to run command!");
-    let output_str = std::str::from_utf8(&output.stdout).unwrap();
-
-    let mut wm = String::from("Unknown");
-    for i in wms.iter() {
-        if output_str.contains(i) {
-            wm = String::from(*i)
-        }
-    }
-
-    wm
-}
-
-fn get_memory() -> [String; 2] {
-    let system = System::new();
-
-    let mem = system.memory().expect("Failed to retrieve memory!");
-
-    [
-        saturating_sub_bytes(mem.total, mem.free).to_string(),
-        mem.total.to_string(),
-    ]
-}
-
-fn get_ascii() -> Vec<String> {
-    // DON'T REMOVE ME ;-;
-    let art = ANSIString::from(
-        "
-     ╱|、      
-    (˚ˎ 。7    
-     |、˜〵    
-     じしˍ,)ノ 
-        ",
-    );
-
-    let art_lines = art.lines();
-    let mut art_array = vec![];
-    for i in art_lines {
-        art_array.push(String::from(i));
-    }
-    art_array
-}
+mod util;
 
 fn main() {
-    // Add window managers as needed
-    let wms = vec![
-        "i3", "openbox", "awesome", "bspwm", "qtile", "hyprland", "sway", "xmonad", "dwm",
-    ];
+    // Define args
+    let mut opts = Options::new();
 
+    opts.optopt("f", "file", "loads an ascii file from path", "FILE");
+    opts.optopt(
+        "p",
+        "padding",
+        "sets padding between ascii and data",
+        "PADDING",
+    );
+    opts.optopt(
+        "s",
+        "seperator",
+        "chnages the symbol between the ascii and statistics",
+        "SEPERATOR",
+    );
+
+    // Get args
+    let args: Vec<String> = env::args().collect();
+    let file_path: FetchResult<String> = fetch_argument(&args, &opts, "f");
+    let padding: usize = fetch_argument(&args, &opts, "p").unwrap_or(3);
+    let sep: String = fetch_argument(&args, &opts, "s").unwrap_or("".to_owned());
+
+    // Retrieve data
+    let ascii = file_path.map_or(get_ascii(), |path| {
+        load_ascii(path.as_str()).unwrap_or(get_ascii())
+    });
     let mem = get_memory();
     let distro = get_distro();
-    let ascii = get_ascii();
 
-    let d = format!("{} {}", distro[0], distro[1]);
-    let w = format!("{} {}", "󰖲", get_window_manager(wms));
-    let p = format!("{} {}", "󰏖", get_packages());
-    let m = format!("{} {} / {}", "󰍛", mem[0], mem[1]);
+    let d = format!("{} {} {}", distro[0], sep, distro[1]);
+    let w = format!("{} {} {}", "󰖲", sep, get_window_manager());
+    let p = format!("{} {} {}", "󰏖", sep, get_packages());
+    let m = format!("{} {} {} / {}", "󰍛", sep, mem[0], mem[1]);
+
+    // Create data array in order
     let data = vec![d.as_str(), w.as_str(), p.as_str(), m.as_str()];
-
     let mut fetch = String::new();
-    for i in 1..5 {
-        let di = i - 1;
-        if di < data.len() {
-            let data_text = data[di];
-            let text = match di {
-                0 => Color::Blue.italic().paint(data_text),
-                1 => Color::Yellow.italic().paint(data_text),
-                2 => Color::Green.italic().paint(data_text),
-                3 => Color::Purple.italic().paint(data_text),
+
+    // Get longest line in the ascii to properly space the information
+    let longest = ascii.iter().map(|x| x.len()).max().unwrap();
+
+    for i in 0..ascii.len() {
+        let mut ascii_line = ascii[i].to_owned();
+
+        if i < data.len() {
+            // Add spacing elements
+            for _ in 0..longest + padding as usize - ascii_line.len() {
+                ascii_line.push(' ');
+            }
+
+            // Render data with color
+            let d = data[i];
+            let text = match i {
+                0 => Color::Blue.italic().paint(d),
+                1 => Color::Yellow.italic().paint(d),
+                2 => Color::Green.italic().paint(d),
+                3 => Color::Purple.italic().paint(d),
                 _ => ANSIString::from(""),
             };
-            fetch += format!("{}  {}\n", ascii[i], text).as_str();
-        } else {
-            fetch += format!("{}\n", ascii[i]).as_str()
+
+            fetch += format!(" {}{}\n", ascii_line, text).as_str();
         }
     }
+
     println!("\n{}\n", fetch)
 }

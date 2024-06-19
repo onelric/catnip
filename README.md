@@ -6,10 +6,7 @@
 * Small cute cat
 * Lots of distributions
 * Fully written in rust
-
-### Maybe to come
-* Customization via arguments
-* More distributions
+* Customizability
 
 ### Install
 Make sure cargo is installed.
