@@ -42,29 +42,29 @@ fn main() {
     let mem = get_memory();
     let distro = get_distro();
 
-    let d = format!("{} {} {}", distro[0], sep, distro[1]);
-    let w = format!("{} {} {}", "󰖲", sep, get_window_manager());
-    let p = format!("{} {} {}", "󰏖", sep, get_packages());
-    let m = format!("{} {} {} / {}", "󰍛", sep, mem[0], mem[1]);
-
     // Create data array in order
-    let data = vec![d.as_str(), w.as_str(), p.as_str(), m.as_str()];
-    let mut fetch = String::new();
+    let data = [
+        format!("{} {} {}", distro.0, sep, distro.1),
+        format!("{} {} {}", "󰖲", sep, get_window_manager()),
+        format!("{} {} {}", "󰏖", sep, get_packages(&distro.1)),
+        format!("{} {} {} / {}", "󰍛", sep, mem[0], mem[1]),
+    ];
 
     // Get longest line in the ascii to properly space the information
     let longest = ascii.iter().map(|x| x.len()).max().unwrap();
 
+    let mut fetch = String::new();
     for i in 0..ascii.len() {
         let mut ascii_line = ascii[i].to_owned();
 
         if i < data.len() {
             // Add spacing elements
-            for _ in 0..longest + padding as usize - ascii_line.len() {
+            for _ in 0..longest + padding - ascii_line.len() {
                 ascii_line.push(' ');
             }
 
             // Render data with color
-            let d = data[i];
+            let d = data[i].as_str();
             let text = match i {
                 0 => Color::Blue.italic().paint(d),
                 1 => Color::Yellow.italic().paint(d),

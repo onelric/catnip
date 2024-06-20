@@ -1,4 +1,3 @@
-use core::panic;
 use std::{fs, path::PathBuf, process::Command, str::FromStr};
 
 use ansi_term::ANSIString;
@@ -8,6 +7,22 @@ use systemstat::{saturating_sub_bytes, Platform, System};
 
 pub type FetchResult<T> = Result<T, String>;
 
+/// Returns the result of fetching a commandline argument's value by id.
+///
+/// # Examples
+/// User input:
+/// `./app -f ~/filepath`
+///
+/// ```
+/// use getopts::Options;
+///
+/// let args: Vec<String> = env::args().collect();
+/// let mut opts = Options::new();
+///
+/// opts.optopt("f", "file", "loads an ascii file from path", "FILE");
+///
+/// let file_path: FetchResult<String> = fetch_argument(&args, &opts, "f");
+/// ```
 pub fn fetch_argument<T>(args: &Vec<String>, opts: &Options, alias: &str) -> FetchResult<T>
 where
     T: FromStr,
@@ -27,10 +42,31 @@ where
 }
 
 // Get packages
-pub fn get_packages() -> String {
+pub fn get_packages(distro: &Type) -> String {
+    let command = match distro {
+        Type::Debian | Type::Ubuntu | Type::Pop | Type::Mint | Type::Kali => {
+            "dpkg --get-selections | grep -v deinstall | wc -l"
+        }
+        Type::openSUSE
+        | Type::Redhat
+        | Type::Fedora
+        | Type::CentOS
+        | Type::AlmaLinux
+        | Type::RockyLinux => "rpm -qa | wc -l",
+        Type::Void => "xbps-query -l | wc -l",
+        Type::Gentoo => "equery list | wc -l",
+        Type::Arch | Type::Manjaro | Type::EndeavourOS => "pacman -Q | wc -l",
+        Type::FreeBSD => "pkg info | wc -l",
+        Type::Solus => "eopkg li | wc -l",
+        Type::NixOS => "nix-env -q | wc -l",
+        Type::Alpine => "apk info | wc -l",
+        _ => "Unable to identify package manager",
+    };
+
     let output = Command::new("sh")
         .arg("-c")
-        .arg("pacman -Qq | wc -l")
+        //.arg("pacman -Qq | wc -l")
+        .arg(command)
         .output()
         .expect("Failed to run pacman command!");
 
@@ -40,11 +76,11 @@ pub fn get_packages() -> String {
         .to_owned()
 }
 
-pub fn get_distro() -> [String; 2] {
+pub fn get_distro() -> (String, Type) {
     let distro = os_info::get().os_type();
 
     // Get icon
-    [
+    (
         match distro {
             Type::Arch => "",
             Type::Debian => "",
@@ -69,8 +105,8 @@ pub fn get_distro() -> [String; 2] {
             _ => "",
         }
         .to_owned(),
-        distro.to_string(),
-    ]
+        distro,
+    )
 }
 
 pub fn get_window_manager() -> String {
