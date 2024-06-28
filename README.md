@@ -9,7 +9,7 @@
 
 ### Customization
 
-![alt text](https://github.com/onelric/fetchcat/blob/main/img/screenshot.png?raw=true)
+![alt text](https://github.com/onelric/fetchcat/blob/main/img/img.png?raw=true)
 
 ### Install
 On arch you can run `makepkg`
