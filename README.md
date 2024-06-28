@@ -42,7 +42,7 @@ mv catnip/catnip ~/.local/bin/
 
 ### Contributors
 
-<img src="https://github.com/onelric/fetchcat/blob/main/img/profile.png?raw=true" alt="Profile Image" style="width:110px;height:110px;border-radius:50%;">
+<img src="https://github.com/onelric/fetchcat/blob/main/img/profile.png?raw=true" alt="Profile Image" style="width:130px;height:130px;border-radius:50%;">
 
 Elric
 
