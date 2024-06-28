@@ -5,7 +5,7 @@ extern crate systemstat;
 
 use std::env;
 
-use ansi_term::{ANSIString, Color};
+use ansi_term::Color;
 use getopts::Options;
 use util::*;
 
@@ -25,15 +25,38 @@ fn main() {
     opts.optopt(
         "s",
         "seperator",
-        "chnages the symbol between the ascii and statistics",
+        "changes the symbol between the ascii and statistics",
         "SEPERATOR",
     );
+    // Get argument -c distro=red split at =
+    opts.optopt("c", "color", "changes color for element", "COLOR");
 
     // Get args
     let args: Vec<String> = env::args().collect();
+
+    let color_arg: String =
+        fetch_argument(&args, &opts, "c").unwrap_or("blue,yellow,green,purple".to_owned());
     let file_path: FetchResult<String> = fetch_argument(&args, &opts, "f");
     let padding: usize = fetch_argument(&args, &opts, "p").unwrap_or(3);
     let sep: String = fetch_argument(&args, &opts, "s").unwrap_or("".to_owned());
+
+    // Map colors
+    let colors: Vec<&str> = color_arg.split(',').collect();
+    let mut color_map: Vec<Color> = vec![];
+    for i in 0..4 {
+        let color_str = colors[i];
+        let color = match color_str {
+            "red" => Color::Red,
+            "yellow" => Color::Yellow,
+            "blue" => Color::Blue,
+            "cyan" => Color::Cyan,
+            "black" => Color::Black,
+            "green" => Color::Green,
+            "purple" => Color::Purple,
+            "white" | _ => Color::White,
+        };
+        color_map.push(color);
+    }
 
     // Retrieve data
     let ascii = file_path.map_or(get_ascii(), |path| {
@@ -64,16 +87,8 @@ fn main() {
             }
 
             // Render data with color
-            let d = data[i].as_str();
-            let text = match i {
-                0 => Color::Blue.italic().paint(d),
-                1 => Color::Yellow.italic().paint(d),
-                2 => Color::Green.italic().paint(d),
-                3 => Color::Purple.italic().paint(d),
-                _ => ANSIString::from(""),
-            };
-
-            fetch += format!(" {}{}\n", ascii_line, text).as_str();
+            let data = data[i].as_str();
+            fetch += format!(" {}{}\n", ascii_line, color_map[i].italic().paint(data)).as_str();
         }
     }
 
