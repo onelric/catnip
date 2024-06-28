@@ -1,6 +1,5 @@
 ## Fetchcat
 
-![alt text](https://github.com/onelric/fetchcat/blob/main/img/screenshot.png?raw=true)
 
 ### Features
 * Small cute cat
@@ -10,31 +9,10 @@
 
 ### Customization
 
-#### Changing ascii
-![alt text](https://github.com/onelric/fetchcat/blob/main/img/custom_ascii.png?raw=true)
-
-Catnip will automaticall look in your ~/ folder.
-```bash
-catnip -f your_file
-```
-
-#### Adding padding
-![alt text](https://github.com/onelric/fetchcat/blob/main/img/padding.png?raw=true)
-
-```
-catnip -p 10
-```
-
-#### Changing seperator character
-![alt text](https://github.com/onelric/fetchcat/blob/main/img/seperator.png?raw=true)
-
-This changes the character between the icons and the data.
-```
-catnip -s "~~"
-```
+![alt text](https://github.com/onelric/fetchcat/blob/main/img/screenshot.png?raw=true)
 
 ### Install
-Make sure cargo is installed.
+On arch you can run `makepkg`
 ```
 git clone https://github.com/onelric/fetchcat.git
 cd fetchcat
