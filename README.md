@@ -25,24 +25,24 @@
 </div>
 
 ### Installation
-#### Make sure cargo is installed
 
-On arch you can run `makepkg`
+On arch you can run `makepkg -si` if cargo is installed.
 ```
 git clone https://github.com/onelric/fetchcat.git
 cd fetchcat
 makepkg -si
 ```
-On other linux distributions you can run ./install.sh.
+On other linux distributions you can simply move the binary to /usr/bin or ~/.local/bin/
 ```
-./install.sh
+git clone https://github.com/onelric/catnip.git
+cd catnip/catnip ~/.local/bin/
 ```
 <div align="center">
 
 
 ### Contributors
 
-<img src="https://github.com/onelric/fetchcat/blob/main/img/profile.png?raw=true" alt="Profile Image" style="width:150px;height:150px;border-radius:50%;">
+<img src="https://github.com/onelric/fetchcat/blob/main/img/profile.png?raw=true" alt="Profile Image" style="width:110px;height:110px;border-radius:50%;">
 
 Elric
 
