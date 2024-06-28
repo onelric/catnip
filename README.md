@@ -3,6 +3,13 @@
 [![Typing SVG](https://readme-typing-svg.demolab.com?font=Maple+Mono&size=50&duration=3500&pause=750&color=E8E3E3&center=true&vCenter=true&random=false&width=525&height=145&lines=Catnip;Fetch+the+cat!;Sniff+sniff)](https://git.io/typing-svg)
 </div>
 
+<div align="center">
+
+![GitHub Repo stars](https://img.shields.io/github/stars/onelric/catnip?style=for-the-badge&labelColor=%23151515&color=%23e8e3e3)
+![GitHub repo size](https://img.shields.io/github/repo-size/onelric/catnip?style=for-the-badge&label=size&labelColor=%23151515&color=%23e8e3e3)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/onelric/catnip?style=for-the-badge&label=commits&labelColor=%23151515&color=%23e8e3e3)
+</div>
+
 ### Features
 * Small cute cat!
 * Lots of distributions supported!
