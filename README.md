@@ -35,7 +35,7 @@ makepkg -si
 On other linux distributions you can simply move the binary to /usr/bin or ~/.local/bin/
 ```
 git clone https://github.com/onelric/catnip.git
-cd catnip/catnip ~/.local/bin/
+mv catnip/catnip ~/.local/bin/
 ```
 <div align="center">
 
