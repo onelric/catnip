@@ -54,7 +54,7 @@ pub fn get_packages(distro: &Type) -> String {
         | Type::AlmaLinux
         | Type::RockyLinux => "rpm -qa | wc -l",
         Type::Void => "xbps-query -l | wc -l",
-        Type::Gentoo => "equery list | wc -l",
+        Type::Gentoo => "ls -d /var/db/pkg/*/* | wc -l",
         Type::Arch | Type::Manjaro | Type::EndeavourOS => "pacman -Q | wc -l",
         Type::FreeBSD => "pkg info | wc -l",
         Type::Solus => "eopkg li | wc -l",
