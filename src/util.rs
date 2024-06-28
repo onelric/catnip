@@ -65,7 +65,6 @@ pub fn get_packages(distro: &Type) -> String {
 
     let output = Command::new("sh")
         .arg("-c")
-        //.arg("pacman -Qq | wc -l")
         .arg(command)
         .output()
         .expect("Failed to run pacman command!");
@@ -79,7 +78,6 @@ pub fn get_packages(distro: &Type) -> String {
 pub fn get_distro() -> (String, Type) {
     let distro = os_info::get().os_type();
 
-    // Get icon
     (
         match distro {
             Type::Arch => "",
