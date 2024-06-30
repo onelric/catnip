@@ -28,7 +28,6 @@ fn main() {
         "changes the symbol between the ascii and statistics",
         "SEPERATOR",
     );
-    // Get argument -c distro=red split at =
     opts.optopt("c", "color", "changes color for element", "COLOR");
 
     // Get args
