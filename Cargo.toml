@@ -1,5 +1,5 @@
 [package]
-name = "fetch-catnip"
+name = "catnip"
 version = "0.1.0"
 authors = ["elric <elric.thatonemail@gmail.com>"]
 edition = "2021"
