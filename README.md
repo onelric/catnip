@@ -26,13 +26,17 @@
 
 ### Installation
 
+If cargo is installed you can simply run:
+```
+cargo install fetch-catnip
+```
 On arch you can run `makepkg -si` if cargo is installed.
 ```
 git clone https://github.com/onelric/fetchcat.git
 cd fetchcat
 makepkg -si
 ```
-On other linux distributions you can simply move the binary to /usr/bin or ~/.local/bin/
+On other linux distributions you can simply move the binary to either /usr/bin or ~/.local/bin/
 ```
 git clone https://github.com/onelric/catnip.git
 mv catnip/catnip ~/.local/bin/
