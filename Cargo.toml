@@ -1,5 +1,5 @@
 [package]
-name = "catnip"
+name = "fetch-catnip"
 version = "0.1.0"
 authors = ["elric <elric.thatonemail@gmail.com>"]
 edition = "2021"
@@ -13,3 +13,7 @@ ansi_term = "0.12.1"
 os_info = "3.8.2"
 systemstat = "0.2.3"
 getopts = "0.2"
+
+[[bin]]
+name = "catnip"
+path = "src/main.rs"
