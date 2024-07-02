@@ -5,6 +5,7 @@ authors = ["elric <elric.thatonemail@gmail.com>"]
 edition = "2021"
 description = "Simple fetch displaying system information and a cute cat."
 homepage = "https://github.com/onelric/catnip"
+repository = "https://github.com/onelric/catnip"
 license = "MIT"
 
 [dependencies]
