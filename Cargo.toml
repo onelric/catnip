@@ -3,7 +3,7 @@ name = "catnip"
 version = "0.1.0"
 authors = ["elric <elric.thatonemail@gmail.com>"]
 edition = "2021"
-descrition = "Simple fetch displaying system information and a cute cat."
+description = "Simple fetch displaying system information and a cute cat."
 homepage = "https://github.com/onelric/catnip"
 license = "MIT"
 
