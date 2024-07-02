@@ -72,16 +72,13 @@ fn main() {
         format!("{} {} {} / {}", "󰍛", sep, mem[0], mem[1]),
     ];
 
-    // Get longest line in the ascii to properly space the information
-    let longest = ascii.iter().map(|x| x.len()).max().unwrap();
-
     let mut fetch = String::new();
     for i in 0..ascii.len() {
         let mut ascii_line = ascii[i].to_owned();
 
         if i < data.len() {
-            // Add spacing elements
-            for _ in 0..longest + padding - ascii_line.len() {
+            // Apply spacing
+            for _ in 0..padding {
                 ascii_line.push(' ');
             }
 

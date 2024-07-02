@@ -41,7 +41,7 @@ where
     }
 }
 
-// Get packages
+/// Gets amount of installed packages
 pub fn get_packages(distro: &Type) -> String {
     let command = match distro {
         Type::Debian | Type::Ubuntu | Type::Pop | Type::Mint | Type::Kali => {
@@ -109,7 +109,7 @@ pub fn get_distro() -> (String, Type) {
 
 pub fn get_window_manager() -> String {
     let wms = vec![
-        "i3", "openbox", "awesome", "bspwm", "qtile", "hyprland", "sway", "xmonad", "dwm",
+        "i3", "openbox", "awesome", "bspwm", "qtile", "hyprland", "sway", "xmonad", "dwm", "bery",
     ];
 
     // Get window manager
@@ -130,6 +130,7 @@ pub fn get_window_manager() -> String {
     wm
 }
 
+/// Returns used memory and total memory
 pub fn get_memory() -> [String; 2] {
     let system = System::new();
 
@@ -141,6 +142,7 @@ pub fn get_memory() -> [String; 2] {
     ]
 }
 
+/// Loads ascii file from home directory
 pub fn load_ascii(p: &str) -> Option<Vec<String>> {
     let path = PathBuf::from(std::env::var("HOME").unwrap()).join(p);
     if !path.exists() {
@@ -155,9 +157,10 @@ pub fn load_ascii(p: &str) -> Option<Vec<String>> {
     )
 }
 
+/// Retunrs default ascii
 pub fn get_ascii() -> Vec<String> {
-    vec![" ╱|、", "(˚ˎ 。7", " |、˜〵", " じしˍ,)/"]
+    vec![" ╱|、    ", "(˚ˎ 。7  ", " |、˜〵  ", " じしˍ,)/"]
         .into_iter()
-        .map(|x| x.trim_end().to_string())
+        .map(|x| x.to_string())
         .collect()
 }
