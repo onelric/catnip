@@ -3,32 +3,33 @@ extern crate getopts;
 extern crate os_info;
 extern crate systemstat;
 
+mod args;
+mod util;
+
 use std::env;
+
+use args::{add_arg, fetch_argument, FetchResult};
+use util::{get_ascii, get_distro, get_memory, get_packages, get_window_manager, load_ascii};
 
 use ansi_term::Color;
 use getopts::Options;
-use util::*;
-
-mod util;
 
 fn main() {
     // Define args
     let mut opts = Options::new();
 
-    opts.optopt("f", "file", "loads an ascii file from path", "FILE");
-    opts.optopt(
-        "p",
-        "padding",
-        "sets padding between ascii and data",
-        "PADDING",
-    );
-    opts.optopt(
-        "s",
+    add_arg(&mut opts, "padding", "sets padding between ascii and data");
+    add_arg(&mut opts, "file", "loads ascii from file at home path");
+    add_arg(
+        &mut opts,
         "seperator",
-        "changes the symbol between the ascii and statistics",
-        "SEPERATOR",
+        "changes the symbol(s) between the icons and information",
     );
-    opts.optopt("c", "color", "changes color for element", "COLOR");
+    add_arg(
+        &mut opts,
+        "color",
+        "changes the color of the elements in listing order",
+    );
 
     // Get args
     let args: Vec<String> = env::args().collect();

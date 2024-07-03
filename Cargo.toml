@@ -1,6 +1,6 @@
 [package]
 name = "fetch-catnip"
-version = "0.1.1"
+version = "0.1.2"
 authors = ["elric <elric.thatonemail@gmail.com>"]
 edition = "2021"
 description = "Simple fetch displaying system information and a cute cat."
