@@ -21,7 +21,7 @@ pub fn get_packages(distro: &Type) -> String {
         Type::Arch | Type::Manjaro | Type::EndeavourOS => "pacman -Q | wc -l",
         Type::FreeBSD => "pkg info | wc -l",
         Type::Solus => "eopkg li | wc -l",
-        Type::NixOS => "nix-env -q | wc -l",
+        Type::NixOS => "nix-store -qR ~/.nix-profile | wc -l",
         Type::Alpine => "apk info | wc -l",
         _ => "Unable to identify package manager",
     };
