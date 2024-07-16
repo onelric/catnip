@@ -5,43 +5,43 @@
 
 <div align="center">
 
-![GitHub Repo stars](https://img.shields.io/github/stars/onelric/catnip?style=for-the-badge&labelColor=%23151515&color=%23e8e3e3)
-![GitHub repo size](https://img.shields.io/github/repo-size/onelric/catnip?style=for-the-badge&label=size&labelColor=%23151515&color=%23e8e3e3)
-![GitHub commit activity](https://img.shields.io/github/commit-activity/t/onelric/catnip?style=for-the-badge&label=commits&labelColor=%23151515&color=%23e8e3e3)
+![GitHub repo size](https://img.shields.io/github/repo-size/onelric/catnip?style=for-the-badge&label=size&labelColor=%23151515&color=%23b66467)
+![GitHub commit activity](https://img.shields.io/github/commit-activity/t/onelric/catnip?style=for-the-badge&label=commits&labelColor=%23151515&color=%23a988b0)
+![Linux rice](https://img.shields.io/badge/for-linux-151515?style=for-the-badge&logo=Linux&logoColor=%23e8e3e3&labelColor=%23151515&color=%238aa6a2)
+
+![License](https://img.shields.io/github/license/onelric/catnip?style=for-the-badge&labelColor=%23151515&color=%238c977d)
+![Stars](https://img.shields.io/github/stars/onelric/catnip?style=for-the-badge&logo=apachespark&logoColor=%23e8e3e3&labelColor=%23151515&color=%23d9bc8c)
+
+
+## Features
 </div>
 
-### Features
 * Small cute cat!
 * Lots of distributions supported!
 * Fully written in rust!
-* Customizability!
+* Lots of customization!
 * Possibly more updates to come!
 
+<div align="center">
 
-### Customization
-#### available info options
-* os
-* user
-* mem
-* wm
-* pkgs
-* kernel
-* editor
+## Customization
 
-#### available colors
-* red
-* yellow
-* blue
-* cyan
-* black
-* green
-* magenta
-* white
-* 
-![alt text](https://imgur.com/zEbiADg.png?raw=true)
+
+#### Available info options
+```
+os, user, mem, wm, pkgs, kernel, editor
+```
+
+#### Available colors
+```
+red, yellow, blue, cyan, green, magenta, white, black
+```
+
+![alt text](https://imgur.com/ZALKkCE.png?raw=true)
 
 
 ### Installation
+</div>
 
 If cargo is installed you can simply run:
 ```
@@ -61,11 +61,14 @@ mv catnip/catnip ~/.local/bin/
 <div align="center">
 
 
-### Contributors
+#
 
-<img src="https://github.com/onelric/fetchcat/blob/main/img/profile.png?raw=true" alt="Profile Image" style="width:130px;height:130px;border-radius:50%;">
-
-Elric
-
+<div id="header" align="center">
+  <a href="https://github.com/onelric/">
+    <img src="https://imgur.com/JTojIaG.png" width="100"/>
+  </a>
+  <a href="https://github.com/onelric/">
+    <h3>elric</h3>  
+  </a>
 </div>
 
