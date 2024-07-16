@@ -1,3 +1,4 @@
 /target
 TODO.md
 example*
+rustfmt.toml

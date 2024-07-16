@@ -9,69 +9,80 @@ mod util;
 use std::env;
 
 use args::{add_arg, fetch_argument, FetchResult};
-use util::{get_ascii, get_distro, get_memory, get_packages, get_window_manager, load_ascii};
+use util::*;
 
 use ansi_term::Color;
 use getopts::Options;
+
+const ARGUMENTS: [[&'static str; 2]; 6] = [
+    ["trauma", "has the cat been through some stuff?"],
+    ["info", "changes what system information gets displayed"],
+    ["padding", "changes the padding between the ascii and system info"],
+    ["file", "specifies a file to be loaded as ascii. max 4 lines long"],
+    [
+        "seperator",
+        "adds custom seperator characters between the icons and the information",
+    ],
+    [
+        "color",
+        "changes the color of the icons and system information that is displayed",
+    ],
+];
 
 fn main() {
     // Define args
     let mut opts = Options::new();
 
-    add_arg(&mut opts, "padding", "sets padding between ascii and data");
-    add_arg(&mut opts, "file", "loads ascii from file at home path");
-    add_arg(
-        &mut opts,
-        "seperator",
-        "changes the symbol(s) between the icons and information",
-    );
-    add_arg(
-        &mut opts,
-        "color",
-        "changes the color of the elements in listing order",
-    );
+    for i in ARGUMENTS.iter() {
+        add_arg(&mut opts, i[0], i[1]);
+    }
 
     // Get args
     let args: Vec<String> = env::args().collect();
+    let trauma: bool = fetch_argument(&args, &opts, "t").unwrap_or(false);
 
     let color_arg: String =
         fetch_argument(&args, &opts, "c").unwrap_or("blue,yellow,green,purple".to_owned());
     let file_path: FetchResult<String> = fetch_argument(&args, &opts, "f");
     let padding: usize = fetch_argument(&args, &opts, "p").unwrap_or(3);
     let sep: String = fetch_argument(&args, &opts, "s").unwrap_or("".to_owned());
+    let stats_arg: String = fetch_argument(&args, &opts, "i").unwrap_or("os,wm,pkgs,mem".to_owned());
 
-    // Map colors
-    let colors: Vec<&str> = color_arg.split(',').collect();
-    let mut color_map: Vec<Color> = vec![];
-    for i in 0..4 {
-        let color_str = colors[i];
-        let color = match color_str {
-            "red" => Color::Red,
-            "yellow" => Color::Yellow,
-            "blue" => Color::Blue,
-            "cyan" => Color::Cyan,
-            "black" => Color::Black,
-            "green" => Color::Green,
-            "purple" => Color::Purple,
-            "white" | _ => Color::White,
-        };
-        color_map.push(color);
-    }
+    let f = |i: &str, s: String| -> String { format!("{i} {} {s}", sep) };
 
-    // Retrieve data
-    let ascii = file_path.map_or(get_ascii(), |path| {
-        load_ascii(path.as_str()).unwrap_or(get_ascii())
-    });
     let mem = get_memory();
     let distro = get_distro();
+    let stats: Vec<String> = stats_arg.split(',').map(|s| s.to_string()).collect();
 
-    // Create data array in order
-    let data = [
-        format!("{} {} {}", distro.0, sep, distro.1),
-        format!("{} {} {}", "󰖲", sep, get_window_manager()),
-        format!("{} {} {}", "󰏖", sep, get_packages(&distro.1)),
-        format!("{} {} {} / {}", "󰍛", sep, mem[0], mem[1]),
+    let info_map = vec![
+        ("os", f(distro.0.as_str(), distro.1.to_string().to_lowercase())),
+        ("user", format!("{} {} {}@{}", "", sep, get_host(), get_user())),
+        ("mem", format!("{} {} {} / {}", "󰍛", sep, mem[0], mem[1])),
+        ("pkgs", f("󰏖", get_packages(&distro.1))),
+        ("wm", f("󰖲", get_window_manager())),
+        ("editor", f("󰅩", get_editor())),
+        ("kernel", f("󰒓", run_command("uname -r"))),
     ];
+    let data = map(&info_map, stats);
+
+    // Map colors
+    let colors = color_arg.split(',').map(|c| c.to_string()).collect();
+    let color_map = vec![
+        ("red", Color::Red),
+        ("yellow", Color::Yellow),
+        ("blue", Color::Blue),
+        ("cyan", Color::Cyan),
+        ("black", Color::Black),
+        ("green", Color::Green),
+        ("magenta", Color::Purple),
+        ("white", Color::White),
+    ];
+    let color_map = map(&color_map, colors);
+
+    // Retrieve data
+    let ascii = file_path.map_or(get_ascii(trauma), |path| {
+        load_ascii(path.as_str()).unwrap_or(get_ascii(trauma))
+    });
 
     let mut fetch = String::new();
     for i in 0..ascii.len() {
@@ -84,8 +95,13 @@ fn main() {
             }
 
             // Render data with color
-            let data = data[i].as_str();
-            fetch += format!(" {}{}\n", ascii_line, color_map[i].italic().paint(data)).as_str();
+            let data = data[i].unwrap().as_str();
+            fetch += format!(
+                " {}{}\n",
+                ascii_line,
+                color_map[i].unwrap_or(&Color::White).italic().paint(data)
+            )
+            .as_str();
         }
     }
 

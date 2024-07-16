@@ -4,38 +4,125 @@ use ansi_term::ANSIString;
 use os_info::Type;
 use systemstat::{saturating_sub_bytes, Platform, System};
 
-/// Gets amount of installed packages
-pub fn get_packages(distro: &Type) -> String {
-    let command = match distro {
+/// Example:
+///let colors = color_arg.split(',').map(|c| c.to_string()).collect();
+///let color_map = vec![
+///    ("red", Color::Red),
+///    ("yellow", Color::Yellow),
+///    ("blue", Color::Blue),
+///    ("cyan", Color::Cyan),
+///    ("black", Color::Black),
+///    ("green", Color::Green),
+///    ("magenta", Color::Purple),
+///    ("white", Color::White),
+///];
+///let color_map = map(&color_map, colors);
+pub fn map<'a, T>(mappings: &'a Vec<(&'static str, T)>, args: Vec<String>) -> Vec<Option<&'a T>>
+where
+    T: std::fmt::Debug + PartialEq + Clone,
+{
+    args.into_iter()
+        .map(|key| {
+            for (k, v) in mappings {
+                if k == &key {
+                    return Some(v);
+                }
+            }
+            None
+        })
+        .collect()
+}
+
+#[derive(PartialEq, Eq, Debug)]
+pub enum PackageManager {
+    Dpkg(String),
+    Rpm(String),
+    Xbps(String),
+    Emerge(String),
+    Pacman(String),
+    Pkg(String),
+    Eopkg(String),
+    Nix(String),
+    Apk(String),
+    None,
+}
+
+impl PackageManager {
+    pub fn get_command(&self) -> String {
+        match self {
+            PackageManager::Dpkg(c) => c.to_owned(),
+            PackageManager::Pacman(c) => c.to_owned(),
+            PackageManager::Nix(c) => c.to_owned(),
+            PackageManager::Rpm(c) => c.to_owned(),
+            PackageManager::Pkg(c) => c.to_owned(),
+            PackageManager::Xbps(c) => c.to_owned(),
+            PackageManager::Eopkg(c) => c.to_owned(),
+            PackageManager::Apk(c) => c.to_owned(),
+            PackageManager::Emerge(c) => c.to_owned(),
+            PackageManager::None => "Unable to identify package manager.".to_owned(),
+        }
+    }
+}
+
+pub fn get_package_manager(distro: &Type) -> PackageManager {
+    match distro {
         Type::Debian | Type::Ubuntu | Type::Pop | Type::Mint | Type::Kali => {
-            "dpkg --get-selections | grep -v deinstall | wc -l"
+            PackageManager::Dpkg("dpkg-query -f '.\\n' -W".to_string())
         }
         Type::openSUSE
         | Type::Redhat
         | Type::Fedora
         | Type::CentOS
         | Type::AlmaLinux
-        | Type::RockyLinux => "rpm -qa | wc -l",
-        Type::Void => "xbps-query -l | wc -l",
-        Type::Gentoo => "ls -d /var/db/pkg/*/* | wc -l",
-        Type::Arch | Type::Manjaro | Type::EndeavourOS => "pacman -Q | wc -l",
-        Type::FreeBSD => "pkg info | wc -l",
-        Type::Solus => "eopkg li | wc -l",
-        Type::NixOS => "nix-store -qR ~/.nix-profile | wc -l",
-        Type::Alpine => "apk info | wc -l",
-        _ => "Unable to identify package manager",
-    };
+        | Type::RockyLinux => PackageManager::Rpm("rpm -qa".to_string()),
+        Type::Void => PackageManager::Xbps("xbps-query -l".to_string()),
+        Type::Gentoo => PackageManager::Emerge("ls -d /var/db/pkg/*/*".to_string()),
+        Type::Arch | Type::Manjaro | Type::EndeavourOS => PackageManager::Pacman("pacman -Qq".to_string()),
+        Type::FreeBSD => PackageManager::Pkg("pkg info".to_string()),
+        Type::Solus => PackageManager::Eopkg("eopkg li".to_string()),
+        Type::NixOS => PackageManager::Nix(
+            "echo -n '󰣖 ' ; echo -n $(nix-store -qR ~/.nix-profile | wc -l) ; echo -n '  ' ; nix-store -qR /run/current-system/sw".to_string(),
+        ),
+        Type::Alpine => PackageManager::Apk("apk info".to_string()),
+        _ => PackageManager::None,
+    }
+}
 
-    let output = Command::new("sh")
+pub fn run_command(cmd: &str) -> String {
+    let c = Command::new("sh")
         .arg("-c")
-        .arg(command)
+        .arg(cmd)
         .output()
-        .expect("Failed to run pacman command!");
+        .expect(format!("Failed to run command {}", cmd).as_str());
 
-    std::str::from_utf8(&output.stdout)
-        .unwrap()
-        .trim()
-        .to_owned()
+    std::str::from_utf8(&c.stdout).unwrap().trim().to_owned()
+}
+
+pub fn get_editor() -> String {
+    run_command("echo \"$EDITOR\"")
+}
+
+// TODO)) Make this more reliable
+pub fn _get_shell() -> String {
+    match std::env::var("SHELL") {
+        Ok(s) => s,
+        Err(_) => "Failed to fetch user's shell".to_owned(),
+    }
+}
+
+/// Gets amount of installed packages
+pub fn get_packages(distro: &Type) -> String {
+    let package_command = get_package_manager(distro).get_command();
+
+    run_command((package_command.to_owned() + "| wc -l").as_str())
+}
+
+pub fn get_host() -> String {
+    run_command("hostname").to_lowercase()
+}
+
+pub fn get_user() -> String {
+    run_command("whoami").to_lowercase()
 }
 
 /// Gets distribution
@@ -78,16 +165,11 @@ pub fn get_window_manager() -> String {
     ];
 
     // Get window manager
-    let output = Command::new("sh")
-        .arg("-c")
-        .arg("ps -e")
-        .output()
-        .expect("Failed to run command!");
-    let output_str = std::str::from_utf8(&output.stdout).unwrap();
+    let output = run_command("ps -e");
 
     let mut wm = String::from("Unknown");
     for i in wms.iter() {
-        if output_str.contains(i) {
+        if output.contains(i) {
             wm = String::from(*i)
         }
     }
@@ -122,10 +204,15 @@ pub fn load_ascii(p: &str) -> Option<Vec<String>> {
     )
 }
 
-/// Retunrs default ascii
-pub fn get_ascii() -> Vec<String> {
-    vec![" ╱|、    ", "(˚ˎ 。7  ", " |、˜〵  ", " じしˍ,)/"]
-        .into_iter()
-        .map(|x| x.to_string())
-        .collect()
+/// Returns default ascii
+pub fn get_ascii(trauma: bool) -> Vec<String> {
+    vec![
+        " ╱|、    ",
+        if trauma { "(Oˎ o7   " } else { "(˚ˎ 。7  " },
+        " |、˜〵  ",
+        " じしˍ,)/",
+    ]
+    .into_iter()
+    .map(|x| x.to_string())
+    .collect()
 }
