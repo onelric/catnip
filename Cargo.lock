@@ -28,7 +28,7 @@ dependencies = [
 
 [[package]]
 name = "fetch-catnip"
-version = "0.1.3"
+version = "0.2.3"
 dependencies = [
  "ansi_term",
  "getopts",
