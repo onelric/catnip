@@ -36,11 +36,14 @@ where
     T::Err: std::fmt::Debug,
 {
     let provided_args = match opts.parse(&args[1..]) {
-        Ok(a) => a,
-        Err(_) => panic!("Error parsing."),
+        Ok(a) => Some(a),
+        Err(_) => None,
     };
 
-    if let Some(p) = provided_args.opt_str(alias) {
+    if provided_args.is_none() {
+        return FetchResult::Err("Value wasn't provided to argument.".to_owned());
+    }
+    if let Some(p) = provided_args.unwrap().opt_str(alias) {
         p.parse::<T>()
             .map_err(|err| format!("Failed to parse argument: {:?}", err))
     } else {
