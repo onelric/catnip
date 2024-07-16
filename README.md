@@ -18,11 +18,28 @@
 * Possibly more updates to come!
 
 
-<div align="center">
-
 ### Customization
-![alt text](https://github.com/onelric/fetchcat/blob/main/img/img.png?raw=true)
-</div>
+#### available info options
+* os
+* user
+* mem
+* wm
+* pkgs
+* kernel
+* editor
+
+#### available colors
+* red
+* yellow
+* blue
+* cyan
+* black
+* green
+* magenta
+* white
+* 
+![alt text](https://imgur.com/zEbiADg.png?raw=true)
+
 
 ### Installation
 
@@ -51,3 +68,4 @@ mv catnip/catnip ~/.local/bin/
 Elric
 
 </div>
+
