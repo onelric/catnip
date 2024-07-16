@@ -42,7 +42,7 @@ fn main() {
     let trauma: bool = fetch_argument(&args, &opts, "t").unwrap_or(false);
 
     let color_arg: String =
-        fetch_argument(&args, &opts, "c").unwrap_or("blue,yellow,green,purple".to_owned());
+        fetch_argument(&args, &opts, "c").unwrap_or("blue,yellow,green,magenta".to_owned());
     let file_path: FetchResult<String> = fetch_argument(&args, &opts, "f");
     let padding: usize = fetch_argument(&args, &opts, "p").unwrap_or(3);
     let sep: String = fetch_argument(&args, &opts, "s").unwrap_or("".to_owned());
